@@ -1,0 +1,16 @@
+###
+
+POST http://127.0.0.1:8000/api/efp/create/
+Content-Type: application/json
+
+{
+  "first_name": "Mike",
+  "last_name": "Doe"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/api/efp/delete/1
+Content-Type: application/json
+
+{}

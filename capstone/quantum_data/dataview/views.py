@@ -16,8 +16,6 @@ def efp_database_view(request):
     # # Pass the data to the template
     return render(request, 'efp_database.html', {'data': data})
 
-
-
 @api_view(['GET'])
 def efp_database_api(request):
     data = efp.objects.all()
@@ -36,6 +34,26 @@ def update_efp(request, pk):
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def delete_efp(request, pk): 
+    try:
+        obj = efp.objects.get(pk=pk)
+    except efp.DoesNotExist:
+        return Response({'error': 'Object not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    obj.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+def create_efp(request):
+    serializer = EfpSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED) 
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 def upload_csv_view(request):
     if request.method == 'POST' and request.FILES['csv_file']:
