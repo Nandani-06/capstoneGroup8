@@ -1,5 +1,13 @@
+import csv
+from io import TextIOWrapper
+from .forms import CSVUploadForm
+from .models import efp
 from django.shortcuts import render
 from django.http import HttpResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import EfpSerializer
+from rest_framework import status
 
 def efp_database_view(request):
     # Fetch first 5 rows from the database
@@ -7,24 +15,27 @@ def efp_database_view(request):
     #
     # # Pass the data to the template
     return render(request, 'efp_database.html', {'data': data})
-#     try:
-#         # Attempt to interact with the table to ensure it exists
-#         from .models import efp
-#         # You could run a query to check if the table exists or just return a success message
-#         # For simplicity, we assume table creation is successful
-#         return HttpResponse("Table 'efp' has been created successfully!")
-#     except Exception as e:
-#         # If an error occurs (e.g., table does not exist), return a failure message
-#         return HttpResponse(f"Error: {str(e)}")
 
 
-import csv
-from io import TextIOWrapper
-from django.shortcuts import render
-from django.http import HttpResponse
-from .forms import CSVUploadForm
-from .models import efp
 
+@api_view(['GET'])
+def efp_database_api(request):
+    data = efp.objects.all()
+    serializer = EfpSerializer(data, many=True)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+def update_efp(request, pk):
+    try:
+        obj = efp.objects.get(pk=pk)
+    except efp.DoesNotExist:
+        return Response({'error': 'Object not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = EfpSerializer(obj, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def upload_csv_view(request):
     if request.method == 'POST' and request.FILES['csv_file']:
