@@ -54,7 +54,7 @@ def create_efp(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+# to save a csv file into database
 def upload_csv_view(request):
     if request.method == 'POST' and request.FILES['csv_file']:
         csv_file = request.FILES['csv_file']
