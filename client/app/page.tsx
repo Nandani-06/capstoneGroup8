@@ -34,60 +34,51 @@ export default function ProcessPage() {
   // Templates
   const [templates, setTemplates] = useState([]); // State for storing template data
   const [loading, setLoading] = useState(true); // State for loading indicator
-  
 
-  // const MailchimpDropdownMenu = () => (
-  //   <DropdownMenu>
-  //     <DropdownMenuTrigger asChild>
-  //       <Button variant="outline">Open Menu</Button>
-  //     </DropdownMenuTrigger>
-  //     <DropdownMenuContent className="w-56">
-  //       <DropdownMenuItem>Profile</DropdownMenuItem>
-  //       <DropdownMenuItem>Billing</DropdownMenuItem>
-  //       <DropdownMenuItem>Team</DropdownMenuItem>
-  //       <DropdownMenuItem>Subscription</DropdownMenuItem>
-  //     </DropdownMenuContent>
-  //   </DropdownMenu>
-  // );
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const response = await fetch("/api/mailchimp/templates");
+        const text = await response.text();
+        console.log("Raw response:", text);
+  
+        // Parse response as JSON
+        const data = JSON.parse(text);
 
-    // Fetch templates from the API route
-    useEffect(() => {
-      const fetchTemplates = async () => {
-        try {
-          const response = await fetch("/pages/api/mailchimp/templates");
-          const data = await response.json();
-          setTemplates(data); // Store templates in state
-          setLoading(false);
-        } catch (error) {
-          console.error("Error fetching templates:", error);
-          setLoading(false);
-        }
-      };
+        // Filter templates created by "user" only
+        const userTemplates = data.templates?.filter(template => template.type === "user") || [];
   
-      fetchTemplates();
-    }, []);
+        // Set templates to data
+        setTemplates(userTemplates); 
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching templates:", error);
+        setLoading(false);
+      }
+    };
   
-    
-    const MailchimpDropdownMenu = () => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">{loading ? "Loading..." : "Select a Template"}</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
-            <DropdownMenuLabel>Templates</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {templates.length > 0 ? (
-              templates.map((template) => (
-                <DropdownMenuItem key={template.name}>
-                  {template.name}
-                </DropdownMenuItem>
-              ))
-            ) : (
-              <DropdownMenuItem disabled>No templates found</DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-    )
+    fetchTemplates();
+  }, []);
+  
+  // Use a shadcn dropdown menu to generate template list
+  const MailchimpDropdownMenu = () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">{loading ? "Loading..." : "Select a Template"}</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>Templates</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {templates.length > 0 ? (
+          templates.map((template) => (
+            <DropdownMenuItem key={template.id}>{template.name}</DropdownMenuItem>
+          ))
+        ) : (
+          <DropdownMenuItem disabled>No templates found</DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: acceptedFiles => {
