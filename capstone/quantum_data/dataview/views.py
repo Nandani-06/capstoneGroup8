@@ -9,6 +9,71 @@ from rest_framework.response import Response
 from .serializers import EfpSerializer
 from rest_framework import status
 
+@api_view(['GET'])
+def search_efp(request):
+    query = request.GET.get('q', '')  # Get the search query from the request
+    if not query:
+        return Response({'error': 'No search query provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Perform a case-insensitive search on relevant fields
+    results = efp.objects.filter(
+        first_name__icontains=query
+    ) | efp.objects.filter(
+        last_name__icontains=query
+    ) | efp.objects.filter(
+        email__icontains=query
+    ) | efp.objects.filter(
+        email_2__icontains=query
+    ) | efp.objects.filter(
+        teacher_category__icontains=query
+    ) | efp.objects.filter(
+        tags__icontains=query
+    ) | efp.objects.filter(
+        phone__icontains=query
+    ) | efp.objects.filter(
+        mobile__icontains=query
+    ) | efp.objects.filter(
+        school_name__icontains=query
+    ) | efp.objects.filter(
+        school_category__icontains=query
+    ) | efp.objects.filter(
+        industry__icontains=query
+    ) | efp.objects.filter(
+        file_name__icontains=query
+    ) | efp.objects.filter(
+        sheet_name__icontains=query
+    )
+
+    serializer = EfpSerializer(results, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def search_efp_in_col(request):
+    query = request.GET.get('q', '')  # Get the search query from the request
+    column = request.GET.get('col', '')  # Get the column name from the request
+
+    if not query:
+        return Response({'error': 'No search query provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not column:
+        return Response({'error': 'No column specified'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Validate the column name to prevent SQL injection
+    valid_columns = ['first_name', 'last_name', 'email', 'school_name', 'email',
+                     'email_2', 'teacher_category', 'tags', 'phone', 'mobile', 
+                     'school_category', 'industry', 'file_name', 'sheet_name']
+    if column not in valid_columns:
+        return Response({'error': f'Invalid column: {column}'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Perform a case-insensitive search on the specified column
+    filter_kwargs = {f"{column}__icontains": query}
+    results = efp.objects.filter(**filter_kwargs)
+
+    serializer = EfpSerializer(results, many=True)
+    return Response(serializer.data)
+
+
 def efp_database_view(request):
     # Fetch first 5 rows from the database
     data = efp.objects.all()[:5]

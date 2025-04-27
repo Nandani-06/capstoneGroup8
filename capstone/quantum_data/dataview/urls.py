@@ -10,4 +10,6 @@ urlpatterns = [
     path('api/efp/update/<int:pk>', views.update_efp, name='update_efp'),
     path('api/efp/delete/<int:pk>', views.delete_efp, name='delete_efp'),
     path('api/efp/create/', views.create_efp, name='create_efp'),
+    path('api/search-efp', views.search_efp, name='search_efp'),
+    path('api/search-efpincol', views.search_efp_in_col, name='search_efp_in_col'),
 ]

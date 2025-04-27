@@ -1,6 +1,5 @@
 ###
 
-
 POST http://127.0.0.1:8000/api/efp/create/
 Content-Type: application/json
 
@@ -43,3 +42,13 @@ Content-Type: application/json
   "file_name": "data2.xlsx",
   "sheet_name": "Sheet2"
 }
+
+###
+### Search for contacts whose information contains 'Mik'.
+GET http://127.0.0.1:8000/api/search-efp?q=Mik
+Content-Type: application/json
+
+###
+### Search for contacts whose last name contains 'oe'.
+GET http://127.0.0.1:8000/api/search-efpincol?q=oe&col=last_name
+Content-Type: application/json
