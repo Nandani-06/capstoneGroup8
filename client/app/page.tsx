@@ -10,8 +10,16 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import Header from './components/header';
 
-const availableFields = ['name', 'email', 'age', 'phone']
+const availableFields = [
+  'first_name',
+  'last_name',
+  'email',
+  'sex',
+  'phone',
+];
+
 
 export default function ProcessPage() {
   const [rawHeaders, setRawHeaders] = useState<string[]>([])
@@ -94,9 +102,10 @@ export default function ProcessPage() {
 
   return (
     <div className="p-6 max-w-screen-xl mx-auto text-sm text-gray-900 bg-white">
+      <Header />
       <div
         {...getRootProps()}
-        className="border-2 border-dashed border-gray-400 p-8 rounded-xl text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+        className="border-2 border-dashed border-gray-400 p-8 rounded-xl text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition mt-3"
       >
         <input {...getInputProps()} />
         <p className="text-gray-700 font-medium">
