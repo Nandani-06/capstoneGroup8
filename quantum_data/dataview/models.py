@@ -19,7 +19,6 @@ class EfpDatabase(models.Model):
 
     class Meta:
         db_table = 'EfpDatabase'
-        managed = False
         app_label = 'dataview'
 
     # def __str__(self):

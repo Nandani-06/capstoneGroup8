@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'quantum',  # Your actual database name
         'USER': 'postgres',
-        'PASSWORD': '19851212',
+        'PASSWORD': '19971117',
         'HOST': 'localhost',
         'PORT': '5432',
     }
