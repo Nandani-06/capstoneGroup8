@@ -48,4 +48,39 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## 🌱 Environment Configuration
+
+This project uses environment variables to manage database credentials for local development. Each team member should set up their own `.env` file based on the provided template.
+
+### 📄 How to Use the `.env.example` File
+
+1. **Copy the template**
+
+   Rename `.env.example` to `.env` in the project root:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit the `.env` file**
+
+   Update the values in `.env` according to your local PostgreSQL setup:
+
+   ```env
+   POSTGRES_NAME=quantum
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=your_actual_password
+   POSTGRES_HOST=localhost
+   POSTGRES_PORT=5432
+   ```
+
+3. **Run the server**
+
+   Once the `.env` file is configured, run the development server as usual:
+
+   ```bash
+   python manage.py runserver
+   ```
+
+> ⚠️ **Important:** Do **not** commit your `.env` file to version control. It may contain sensitive information. Only `.env.example` should be committed.
 
