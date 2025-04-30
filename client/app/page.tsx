@@ -160,10 +160,9 @@ export default function ProcessPage() {
     <div className="p-6 max-w-screen-xl mx-auto text-sm text-gray-900 bg-white">
       {/* Render DropdownMenuDemo at top of the page */}
       <MailchimpDropdownMenu/>
-
       <div
         {...getRootProps()}
-        className="border-2 border-dashed border-gray-400 p-8 rounded-xl text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+        className="border-2 border-dashed border-gray-400 p-8 rounded-xl text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition mt-3"
       >
         <input {...getInputProps()} />
         <p className="text-gray-700 font-medium">
