@@ -1,14 +1,10 @@
-import client from "@mailchimp/mailchimp_marketing"
-
-client.setConfig({
-  apiKey:process.env.MAILCHIMP_API_KEY,
-  server:process.env.MAILCHIMP_SERVER_PREFIX
-});
+import mailchimp, { configureMailchimp } from "@/utils/mailchimpConfig";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
     try {
-      const response = await client.templates.list();
+      configureMailchimp(); // Set up Mailchimp configuration
+      const response = await mailchimp.templates.list();
       res.status(200).json(response); // Return templates
     } catch (error) {
       console.error("Error fetching templates:", error);
@@ -18,4 +14,5 @@ export default async function handler(req, res) {
     res.setHeader("Allow", ["GET"]);
     res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
+  
 }

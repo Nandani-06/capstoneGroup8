@@ -41,6 +41,9 @@ export default function ProcessPage() {
         const response = await fetch("/api/mailchimp/templates");
         const text = await response.text();
         console.log("Raw response:", text);
+
+        console.log("server:" , process.env.MAILCHIMP_SERVER_PREFIX)
+        console.log("list_id:", process.env.NEXT_PUBLIC_MAILCHIMP_AUDIENCE_ID);
   
         // Parse response as JSON
         const data = JSON.parse(text);
@@ -59,6 +62,32 @@ export default function ProcessPage() {
   
     fetchTemplates();
   }, []);
+
+  
+
+  const selectTemplate = async (templateId, templateName) => {
+    try {
+      const response = await fetch("/api/mailchimp/createCampaign", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          templateId, // Selected template ID
+          templateName, // Optional but must be passed over for including template
+          
+        }),
+      });
+  
+      const data = await response.json();
+      console.log("Campaign response:", data);
+      
+    } catch (error) {
+      console.error("Error creating campaign:", error);
+      alert("Failed to create campaign.");
+    }
+  };
+
   
   // Use a shadcn dropdown menu to generate template list
   const MailchimpDropdownMenu = () => (
@@ -71,13 +100,19 @@ export default function ProcessPage() {
         <DropdownMenuSeparator />
         {templates.length > 0 ? (
           templates.map((template) => (
-            <DropdownMenuItem key={template.id}>{template.name}</DropdownMenuItem>
+            <DropdownMenuItem 
+            key={template.id}
+            onClick={() => selectTemplate(template.id, template.name)}
+            >
+            {template.name}
+            </DropdownMenuItem>
           ))
         ) : (
           <DropdownMenuItem disabled>No templates found</DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+    
   );
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -111,6 +146,7 @@ export default function ProcessPage() {
       return mappedRow;
     });
   }, [rawData, rawHeaders, fieldMap]);
+  
 
   const columns = useMemo<ColumnDef<any>[]>(
     () =>
