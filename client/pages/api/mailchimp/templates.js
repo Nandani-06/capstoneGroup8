@@ -1,9 +1,12 @@
+// API route to fetch templates from Mailchimp user account
+
 import mailchimp, { configureMailchimp } from "@/utils/mailchimpConfig";
 
 export default async function handler(req, res) {
+  
   if (req.method === "GET") {
     try {
-      configureMailchimp(); // Set up Mailchimp configuration
+      configureMailchimp(); // Set up Mailchimp API configuration
       const response = await mailchimp.templates.list();
       res.status(200).json(response); // Return templates
     } catch (error) {

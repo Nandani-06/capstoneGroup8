@@ -20,13 +20,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-
-// ProcessPage main component
 const availableFields = ['name', 'email', 'age', 'phone'];
 
+// ProcessPage main component
 export default function ProcessPage() {
   
-  // Drag & Drop
+  // Drag and Drop
   const [rawHeaders, setRawHeaders] = useState<string[]>([]);
   const [rawData, setRawData] = useState<any[][]>([]);
   const [fieldMap, setFieldMap] = useState<{ [key: string]: string }>({});
@@ -35,20 +34,23 @@ export default function ProcessPage() {
   const [templates, setTemplates] = useState([]); // State for storing template data
   const [loading, setLoading] = useState(true); // State for loading indicator
 
+  // Hook to sync templates with front-end on load
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
+        // Fetch response from back-end
         const response = await fetch("/api/mailchimp/templates");
         const text = await response.text();
         console.log("Raw response:", text);
 
+        // Logging console variables to debug
         console.log("server:" , process.env.MAILCHIMP_SERVER_PREFIX)
         console.log("list_id:", process.env.NEXT_PUBLIC_MAILCHIMP_AUDIENCE_ID);
   
         // Parse response as JSON
         const data = JSON.parse(text);
 
-        // Filter templates created by "user" only
+        // Filter templates created by users only
         const userTemplates = data.templates?.filter(template => template.type === "user") || [];
   
         // Set templates to data
@@ -60,11 +62,12 @@ export default function ProcessPage() {
       }
     };
   
+    // Call function
     fetchTemplates();
   }, []);
 
   
-
+  // Select template and fetch createCampaign API route
   const selectTemplate = async (templateId, templateName) => {
     try {
       const response = await fetch("/api/mailchimp/createCampaign", {
@@ -74,7 +77,7 @@ export default function ProcessPage() {
         },
         body: JSON.stringify({
           templateId, // Selected template ID
-          templateName, // Optional but must be passed over for including template
+          templateName, // For subject line
           
         }),
       });

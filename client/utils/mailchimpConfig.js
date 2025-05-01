@@ -1,6 +1,7 @@
+// Shared function for setting up Mailchimp API configuration 
+
 import mailchimp from "@mailchimp/mailchimp_marketing";
 
-// Shared function for setting up Mailchimp configuration
 export const configureMailchimp = () => {
   mailchimp.setConfig({
     apiKey: process.env.MAILCHIMP_API_KEY, // Load from environment variables
