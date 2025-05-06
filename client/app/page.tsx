@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/button";
 const availableFields = ['name', 'email', 'age', 'phone'];
 
 // ProcessPage main component
+'use client'
+
 export default function ProcessPage() {
   
   // Drag and Drop
@@ -196,106 +198,14 @@ export default function ProcessPage() {
   };
 
   return (
-    <div className="p-6 max-w-screen-xl mx-auto text-sm text-gray-900 bg-white">
-      {/* Render DropdownMenuDemo at top of the page */}
-      <MailchimpDropdownMenu/>
-
-      <div
-        {...getRootProps()}
-        className="border-2 border-dashed border-gray-400 p-8 rounded-xl text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
-      >
-        <input {...getInputProps()} />
-        <p className="text-gray-700 font-medium">
-          📁 Drag & drop your Excel/CSV file here or click to select
-        </p>
-      </div>
-
-      {rawHeaders.length > 0 && (
-        <div className="mt-8 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-800">Column Mapping</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {rawHeaders.map((header, index) => (
-              <div key={header || `header-${index}`}>
-                <label className="block mb-1 font-medium text-gray-800">
-                  {header || `(empty header ${index + 1})`}
-                </label>
-                <select
-                  value={fieldMap[header] || ''}
-                  onChange={(e) => handleFieldChange(header, e.target.value)}
-                  className="border border-gray-300 bg-white text-gray-900 px-3 py-1.5 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Ignore this column</option>
-                  {availableFields.map((f) => (
-                    <option key={f} value={f}>
-                      {f}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {mappedData.length > 0 && (
-        <div className="mt-10">
-          <h2 className="text-lg font-semibold mb-3 text-gray-800">Data Preview (Virtual Scroll)</h2>
-          <div
-            ref={tableContainerRef}
-            className="h-[500px] overflow-auto border rounded-md shadow-sm border-gray-300 bg-white"
-          >
-            <div className="min-w-[600px]">
-              <div className="flex bg-gray-200 sticky top-0 z-10 border-b border-gray-300">
-                {table.getHeaderGroups()[0].headers.map((header) => (
-                  <div
-                    key={header.id}
-                    className="flex-1 px-4 py-2 font-semibold text-gray-800 border-r border-gray-300"
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </div>
-                ))}
-              </div>
-
-              <div
-                style={{
-                  height: `${rowVirtualizer.getTotalSize()}px`,
-                  position: 'relative',
-                }}
-              >
-                {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                  const row = table.getRowModel().rows[virtualRow.index];
-                  return (
-                    <div
-                      key={row.id}
-                      className="flex even:bg-gray-100 absolute left-0 right-0"
-                      style={{
-                        transform: `translateY(${virtualRow.start}px)`,
-                        height: `${virtualRow.size}px`,
-                      }}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <div
-                          key={cell.id}
-                          className="flex-1 px-4 py-2 border-t border-gray-300 text-gray-900"
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition cursor-pointer"
-          >
-            Submit Data
-          </button>
-        </div>
-      )}
+    <div className="max-w-screen-md mx-auto text-center py-24 px-6 bg-white rounded shadow">
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">Welcome to the Einstein First & Quantum girls Database</h1>
+      <p className="text-gray-600 mb-6">
+        This system allows you to upload, preview, and manage data of the Einstein First and Quantum girls.
+      </p>
+      <p className="text-gray-500">
+        Use the sidebar to navigate to the <strong>Data Upload</strong> and <strong>Data Preview</strong> sections.
+      </p>
     </div>
   );
 }

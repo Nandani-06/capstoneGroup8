@@ -1,0 +1,54 @@
+###
+
+POST http://127.0.0.1:8000/api/efp/create/
+Content-Type: application/json
+
+{
+  "first_name": "Mike",
+  "last_name": "Doe"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/api/efp/delete/1
+Content-Type: application/json
+
+{}
+
+###
+### GET all EFP entries
+GET http://127.0.0.1:8000/api/efp/
+Content-Type: application/json
+
+###
+### PUT (update) an existing EFP entry
+PUT http://127.0.0.1:8000/api/efp/update/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "first_name": "John",
+  "last_name": "Doe",
+  "sex": "M",
+  "email": "JohnDoe@example.com",
+  "email_2": "",
+  "teacher_category": "Others",
+  "tags": "",
+  "phone": "1234567890",
+  "mobile": "",
+  "school_name": "Riverdale Secondary",
+  "school_category": "Secondary School",
+  "industry": "Schools",
+  "file_name": "data2.xlsx",
+  "sheet_name": "Sheet2"
+}
+
+###
+### Search for contacts whose information contains 'Mik'.
+GET http://127.0.0.1:8000/api/search-efp?q=Mik
+Content-Type: application/json
+
+###
+### Search for contacts whose last name contains 'oe'.
+GET http://127.0.0.1:8000/api/search-efpincol?q=oe&col=last_name
+Content-Type: application/json
