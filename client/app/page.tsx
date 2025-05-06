@@ -1,34 +1,15 @@
 'use client'
 
-import FileImportTable from '@/components/FileImportTable'
-import EfpPreviewTable from '@/components/EfpPreviewTable'
-
-const availableFields = [  
-  "first_name",
-  "last_name",
-  "sex",
-  "email",
-  "email_2",
-  "phone",
-  "mobile",
-  "teacher_category",
-  "school_name",
-  "school_category",
-  "industry",
-  "file_name",
-  "sheet_name",
-  "tags"]
-
 export default function ProcessPage() {
-  const handleSubmit = (data: any[]) => {
-    console.log('Submitted Data:', data)
-    // Handle the submitted data here
-  }
-
   return (
-    <div className="max-w-screen-xl mx-auto">
-      <FileImportTable availableFields={availableFields} onSubmit={handleSubmit} />
-      <EfpPreviewTable />
+    <div className="max-w-screen-md mx-auto text-center py-24 px-6 bg-white rounded shadow">
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">Welcome to the EFP Database</h1>
+      <p className="text-gray-600 mb-6">
+        This system allows you to upload, preview, and manage data of the Einstein First and Quantum girls.
+      </p>
+      <p className="text-gray-500">
+        Use the sidebar to navigate to the <strong>Data Upload</strong> and <strong>Data Preview</strong> sections.
+      </p>
     </div>
   )
 }
