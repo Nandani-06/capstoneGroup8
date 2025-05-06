@@ -118,6 +118,17 @@ def create_efp(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED) 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+def create_efp_bulk(request):
+    if not isinstance(request.data, list):
+        return Response({'error': 'Expected a list of objects'}, status=400)
+
+    serializer = EfpSerializer(data=request.data, many=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
 
 # to save a csv file into database
 def upload_csv_view(request):

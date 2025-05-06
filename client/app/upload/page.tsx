@@ -1,7 +1,6 @@
 'use client'
 
 import FileImportTable from '@/components/FileImportTable'
-import EfpPreviewTable from '@/components/EfpPreviewTable'
 
 const availableFields = [  
   "first_name",
@@ -28,7 +27,6 @@ export default function ProcessPage() {
   return (
     <div className="max-w-screen-xl mx-auto">
       <FileImportTable availableFields={availableFields} onSubmit={handleSubmit} />
-      <EfpPreviewTable />
     </div>
   )
 }
