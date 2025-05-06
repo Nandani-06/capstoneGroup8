@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 const navItems = [
   { label: 'Data Upload', href: '/upload' },
   { label: 'Data Preview', href: '/preview' },
+  { label: 'Dashboard', href: '/dashboard' },
   // Add more tabs here as needed
 ]
 

@@ -27,7 +27,7 @@ interface Props {
   }
 }
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 15
 
 export default function EfpPreviewTable({ filter }: Props) {
   const [data, setData] = useState<EfpItem[]>([])
