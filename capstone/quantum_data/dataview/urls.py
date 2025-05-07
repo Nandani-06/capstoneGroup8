@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from rest_framework.authtoken import views as rest_views
 
 # URL patterns for routing requests to views in this app
 urlpatterns = [
@@ -13,5 +14,5 @@ urlpatterns = [
     path('api/search-efp', views.search_efp, name='search_efp'),
     path('api/search-efpincol', views.search_efp_in_col, name='search_efp_in_col'),
     path('api/efp/bulk/', views.create_efp_bulk, name='efp-bulk-create'),
-
+    path('token-auth/', rest_views.obtain_auth_token),
 ]
