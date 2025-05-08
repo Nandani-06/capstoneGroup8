@@ -42,6 +42,8 @@ def search_efp(request):
         file_name__icontains=query
     ) | efp.objects.filter(
         sheet_name__icontains=query
+    ) | efp.objects.filter(
+        sex__icontains=query
     )
 
     serializer = EfpSerializer(results, many=True)
@@ -60,7 +62,7 @@ def search_efp_in_col(request):
         return Response({'error': 'No column specified'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Validate the column name to prevent SQL injection
-    valid_columns = ['first_name', 'last_name', 'email', 'school_name', 'email',
+    valid_columns = ['first_name', 'last_name', 'email', 'sex', 'school_name', 'email',
                      'email_2', 'teacher_category', 'tags', 'phone', 'mobile', 
                      'school_category', 'industry', 'file_name', 'sheet_name']
     if column not in valid_columns:
