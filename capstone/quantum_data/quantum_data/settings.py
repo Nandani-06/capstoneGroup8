@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 # https://pypi.org/project/django-cors-headers/
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 
@@ -92,7 +92,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'quantum',  # Your actual database name
         'USER': 'postgres',
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'password'),  # Use environment variable for password
+        'PASSWORD': 'admin123',  # Use environment variable for password
         'HOST': 'localhost',
         'PORT': '5432',
     }
