@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "@types/mailchimp__mailchimp_marketing": "^3.0.21"
+  }
+}

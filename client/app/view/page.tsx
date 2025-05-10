@@ -21,7 +21,7 @@ export default function ProcessPage() {
     const fetchTemplates = async () => {
       try {
         // Fetch response from back-end
-        const response = await fetch("/api/mailchimp/templates");
+        const response = await fetch("/api/mailchimp/templateHandler");
         const text = await response.text();
         console.log("Raw response:", text);
 
@@ -52,7 +52,7 @@ export default function ProcessPage() {
   // Select template and fetch createCampaign API route
   const selectTemplate = async (templateId, templateName) => {
     try {
-      const response = await fetch("/api/mailchimp/createCampaign", {
+      const response = await fetch("/api/mailchimp/campaignHandler", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,10 +105,7 @@ return (
     <div className="p-6 max-w-screen-xl mx-auto text-sm text-gray-900 bg-white">
       {/* Render DropdownMenuDemo at top of the page */}
       <MailchimpDropdownMenu/>
-
-      
-
-         
+       
     </div>
   );
 }
