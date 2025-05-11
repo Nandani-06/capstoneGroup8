@@ -23,9 +23,15 @@ export default function FileImportTable({
   const [rawHeaders, setRawHeaders] = useState<string[]>([])
   const [rawData, setRawData] = useState<any[][]>([])
   const [fieldMap, setFieldMap] = useState<{ [key: string]: string }>({})
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null)
+  const [customTag, setCustomTag] = useState<string>('')
+  const [tagApplied, setTagApplied] = useState<boolean>(false)
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: acceptedFiles => {
+      const file = acceptedFiles[0]
+      setUploadedFileName(file.name)
+
       const reader = new FileReader()
       reader.onload = () => {
         const workbook = XLSX.read(reader.result, { type: 'binary' })
@@ -37,7 +43,7 @@ export default function FileImportTable({
         setRawData(content)
         setFieldMap({})
       }
-      reader.readAsBinaryString(acceptedFiles[0])
+      reader.readAsBinaryString(file)
     },
   })
 
@@ -50,9 +56,15 @@ export default function FileImportTable({
           mappedRow[mappedField] = row[i]
         }
       })
+      if (uploadedFileName) {
+        mappedRow.file_name = uploadedFileName
+      }
+      if (tagApplied && customTag) {
+        mappedRow.tags = customTag
+      }
       return mappedRow
     })
-  }, [rawData, rawHeaders, fieldMap])
+  }, [rawData, rawHeaders, fieldMap, uploadedFileName, customTag, tagApplied])
 
   const columns = useMemo<ColumnDef<any>[]>(() =>
     Object.keys(mappedData[0] || {}).map(field => ({
@@ -101,7 +113,7 @@ export default function FileImportTable({
         },
         body: JSON.stringify(mappedData),
       })
-  
+
       if (!response.ok) {
         const errorData = await response.json()
         console.error('Submission failed:', errorData)
@@ -116,7 +128,6 @@ export default function FileImportTable({
       alert('An error occurred. Please try again later.')
     }
   }
-  
 
   return (
     <div className="p-6 text-sm text-gray-900 bg-white">
@@ -153,6 +164,34 @@ export default function FileImportTable({
                 </select>
               </div>
             ))}
+          </div>
+
+          <div className="mt-4">
+            <label className="block mb-1 text-lg font-semibold text-gray-800">Add Tag to All Rows</label>
+            <div className="flex gap-2 items-center">
+              <input
+                type="text"
+                value={customTag}
+                onChange={e => setCustomTag(e.target.value)}
+                className="px-3 py-1.5 border border-gray-300 rounded"
+                placeholder="Enter tag..."
+              />
+              <button
+                onClick={() => setTagApplied(true)}
+                className="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Apply Tag
+              </button>
+              <button
+                onClick={() => {
+                  setTagApplied(false)
+                  setCustomTag('')
+                }}
+                className="px-3 py-1.5 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+              >
+                Clear Tag
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -42,6 +42,8 @@ def search_efp(request):
         file_name__icontains=query
     ) | efp.objects.filter(
         sheet_name__icontains=query
+    ) | efp.objects.filter(
+        sex__icontains=query
     )
 
     serializer = EfpSerializer(results, many=True)
@@ -60,7 +62,7 @@ def search_efp_in_col(request):
         return Response({'error': 'No column specified'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Validate the column name to prevent SQL injection
-    valid_columns = ['first_name', 'last_name', 'email', 'school_name', 'email',
+    valid_columns = ['first_name', 'last_name', 'email', 'sex', 'school_name', 'email',
                      'email_2', 'teacher_category', 'tags', 'phone', 'mobile', 
                      'school_category', 'industry', 'file_name', 'sheet_name']
     if column not in valid_columns:
@@ -73,6 +75,23 @@ def search_efp_in_col(request):
     serializer = EfpSerializer(results, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def search_efp_advanced(request):
+    filters = {}
+    for field in [
+        'first_name', 'last_name', 'sex', 'email', 'email_2', 'teacher_category',
+        'tags', 'phone', 'mobile', 'school_name', 'school_category',
+        'industry', 'file_name', 'sheet_name']:
+        value = request.GET.get(field, '').strip()
+        if value:
+            filters[f'{field}__icontains'] = value
+
+    if not filters:
+        return Response({'error': 'No valid filters provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    results = efp.objects.filter(**filters)
+    serializer = EfpSerializer(results, many=True)
+    return Response(serializer.data)
 
 def efp_database_view(request):
     # Fetch first 5 rows from the database
@@ -100,6 +119,36 @@ def update_efp(request, pk):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PUT'])
+def update_efp_bulk(request):
+    if not isinstance(request.data, list):
+        return Response({'error': 'Expected a list of objects'}, status=status.HTTP_400_BAD_REQUEST)
+
+    updated_objects = []
+    errors = []
+
+    for entry in request.data:
+        pk = entry.get('id')
+        if not pk:
+            errors.append({'error': 'Missing id in entry', 'entry': entry})
+            continue
+
+        try:
+            obj = efp.objects.get(pk=pk)
+        except efp.DoesNotExist:
+            errors.append({'error': f'Object with id {pk} not found'})
+            continue
+
+        serializer = EfpSerializer(obj, data=entry, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            updated_objects.append(serializer.data)
+        else:
+            errors.append({'id': pk, 'errors': serializer.errors})
+
+    return Response({'updated': updated_objects, 'errors': errors}, status=status.HTTP_207_MULTI_STATUS)
+
+
 @api_view(['DELETE'])
 def delete_efp(request, pk): 
     try:
@@ -109,6 +158,17 @@ def delete_efp(request, pk):
     
     obj.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+def delete_efp_bulk(request):
+    ids = request.data.get('ids', [])
+    
+    if not isinstance(ids, list) or not all(isinstance(i, int) for i in ids):
+        return Response({'error': 'Invalid ID list'}, status=status.HTTP_400_BAD_REQUEST)
+
+    deleted_count, _ = efp.objects.filter(id__in=ids).delete()
+
+    return Response({'deleted': deleted_count}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def create_efp(request):

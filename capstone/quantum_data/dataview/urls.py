@@ -14,5 +14,8 @@ urlpatterns = [
     path('api/search-efp', views.search_efp, name='search_efp'),
     path('api/search-efpincol', views.search_efp_in_col, name='search_efp_in_col'),
     path('api/efp/bulk/', views.create_efp_bulk, name='efp-bulk-create'),
+    path('api/search-efp-advanced', views.search_efp_advanced, name='search_efp_advanced'),
+    path('api/efp/delete-bulk/', views.delete_efp_bulk, name='delete_efp_bulk'),
+    path('api/efp/bulk-update/', views.update_efp_bulk, name='update_efp_bulk'),
     path('token-auth/', rest_views.obtain_auth_token),
 ]
