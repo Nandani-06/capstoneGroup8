@@ -20,9 +20,7 @@ import { Button } from "@/components/ui/button";
 
 
 export default function PreviewPage() {
-  
-  // Filter
-  const [filter, setFilter] = useState({ q: '', col: '' });
+
 
   // Templates
   const [templates, setTemplates] = useState([]);
@@ -94,6 +92,8 @@ export default function PreviewPage() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
+
+  const [filter, setFilter] = useState<Record<string, string>>({})
 
   return (
     <div>
