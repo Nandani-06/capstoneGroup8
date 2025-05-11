@@ -43,7 +43,7 @@ export default function FileImportTable({
         setRawData(content)
         setFieldMap({})
       }
-      reader.readAsBinaryString(file)
+      reader.readAsArrayBuffer(file)
     },
   })
 
