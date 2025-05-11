@@ -27,7 +27,7 @@ export default function PreviewPage() {
   const [loading, setLoading] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [submissionCount, setSubmissionCount] = useState(0);
-  
+
 
   // Hook to sync templates with front-end on load
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function PreviewPage() {
         const text = await response.text();
         const data = JSON.parse(text);
         const userTemplates = data.templates?.filter(template => template.type === "user") || [];
-  
+
         setTemplates(userTemplates);
         setLoading(false);
       } catch (error) {
@@ -45,7 +45,7 @@ export default function PreviewPage() {
         setLoading(false);
       }
     };
-  
+
     fetchTemplates();
   }, []);
 
@@ -55,13 +55,13 @@ export default function PreviewPage() {
       const response = await fetch("/api/mailchimp/campaignHandler", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ templateId, templateName }), 
+        body: JSON.stringify({ templateId, templateName }),
       });
 
       const data = await response.json();
       setSubmissionCount(prevCount => prevCount + 1); // Show message after successful submission
       console.log("Campaign response:", data);
-      
+
     } catch (error) {
       console.error("Error creating campaign:", error);
       alert("Failed to create campaign.");
@@ -79,7 +79,7 @@ export default function PreviewPage() {
         <DropdownMenuSeparator />
         {templates.length > 0 ? (
           templates.map((template) => (
-            <DropdownMenuItem 
+            <DropdownMenuItem
               key={template.id}
               onClick={() => onSelect(template)}
             >
@@ -93,34 +93,50 @@ export default function PreviewPage() {
     </DropdownMenu>
   );
 
+  const [emailsToExport, setEmailsToExport] = useState<string[]>([])
+
+  const copyEmailsToClipboard = () => {
+    const bccString = emailsToExport.join('; ')
+    navigator.clipboard.writeText(bccString).then(() => {
+      alert('Emails copied to clipboard (BCC format)!');
+    }).catch(() => {
+      alert('Failed to copy to clipboard');
+    });
+  }
+
+
   const [filter, setFilter] = useState<Record<string, string>>({})
 
   return (
     <div>
       <div>
         <EfpSearchFilterBar filter={filter} onFilterChange={setFilter} />
-        <EfpPreviewTable filter={filter} />
+        <EfpPreviewTable filter={filter} onExportEmails={setEmailsToExport} />
+
       </div>
       <div>
         <p>Select a template you would like to receive via email:</p>
-        <div className="mx-auto text-sm font-medium py-2 rounded">
+        <div className="mx-auto text-sm font-medium py-2 rounded flex flex-wrap gap-2 items-center">
           <MailchimpDropdownMenu onSelect={setSelectedTemplate} />
-          <Button 
-            className="ml-3 bg-blue-600 hover:bg-blue-700 text-white hover:text-white text-sm font-medium px-4 py-2 rounded" 
-            disabled={!selectedTemplate} 
+          <Button
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded"
+            disabled={!selectedTemplate}
             onClick={() => selectTemplate(selectedTemplate.id, selectedTemplate.name)}
           >
             Submit
           </Button>
-        {submissionCount > 0 && (
-          <p className="mt-2">Campaign sent! Please check your email.</p>
-        )}
-
-        {submissionCount > 1 && (
-          <p className="mt-2">Campaign sent! Please check your email.</p>
-        )}
+          <Button
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded"
+            disabled={emailsToExport.length === 0}
+            onClick={copyEmailsToClipboard}
+          >
+            📋 Copy Emails (BCC)
+          </Button>
         </div>
+
       </div>
+
+
     </div>
   );
 }

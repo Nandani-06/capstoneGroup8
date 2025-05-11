@@ -22,11 +22,12 @@ interface EfpItem {
 
 interface Props {
   filter: Record<string, string>
+  onExportEmails?: (emails: string[]) => void
 }
 
 const PAGE_SIZE = 15
 
-export default function EfpPreviewTable({ filter }: Props) {
+export default function EfpPreviewTable({ filter, onExportEmails }: Props) {
   const [data, setData] = useState<EfpItem[]>([])
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [tagInput, setTagInput] = useState('')
@@ -46,9 +47,9 @@ export default function EfpPreviewTable({ filter }: Props) {
   useEffect(() => {
     setLoading(true)
     setError(null)
-
+  
     const hasFilter = Object.values(filter).some(v => v.trim() !== '')
-
+  
     let fetchUrl = ''
     if (hasFilter) {
       const url = new URL('http://127.0.0.1:8000/api/search-efp-advanced')
@@ -59,7 +60,7 @@ export default function EfpPreviewTable({ filter }: Props) {
     } else {
       fetchUrl = 'http://127.0.0.1:8000/api/efp/'
     }
-
+  
     fetch(fetchUrl)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -70,12 +71,22 @@ export default function EfpPreviewTable({ filter }: Props) {
         setSelectedIds([])
         setCurrentPage(1)
         setLoading(false)
+  
+        // Export emails if onExportEmails is provided
+        if (onExportEmails) {
+          const emails = json
+            .map((item: EfpItem) => item.email?.trim())
+            .filter((email: string | undefined) => !!email)
+          onExportEmails(emails)
+        }
       })
       .catch(err => {
         setError(err.message)
         setLoading(false)
       })
   }, [filter])
+
+  
 
   const toggleSelect = (id: number) => {
     setSelectedIds(prev =>
