@@ -9,6 +9,8 @@ const navItems = [
   { label: 'Data Upload', href: '/upload' },
   { label: 'Data Preview', href: '/preview' },
   { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Mail sending', href: '/mail' },
+
 ]
 
 export default function Sidebar() {
