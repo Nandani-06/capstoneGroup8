@@ -11,10 +11,13 @@ import {
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 
+
 interface FileImportTableProps {
   availableFields: string[]
   onSubmit: (data: any[]) => void
 }
+
+
 
 export default function FileImportTable({
   availableFields,
@@ -23,9 +26,14 @@ export default function FileImportTable({
   const [rawHeaders, setRawHeaders] = useState<string[]>([])
   const [rawData, setRawData] = useState<any[][]>([])
   const [fieldMap, setFieldMap] = useState<{ [key: string]: string }>({})
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null)
+//record file name
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: acceptedFiles => {
+      const file = acceptedFiles[0]
+      setUploadedFileName(file.name)
+    
       const reader = new FileReader()
       reader.onload = () => {
         const workbook = XLSX.read(reader.result, { type: 'binary' })
@@ -37,7 +45,7 @@ export default function FileImportTable({
         setRawData(content)
         setFieldMap({})
       }
-      reader.readAsBinaryString(acceptedFiles[0])
+      reader.readAsBinaryString(file)
     },
   })
 
@@ -50,9 +58,15 @@ export default function FileImportTable({
           mappedRow[mappedField] = row[i]
         }
       })
+  
+      if (uploadedFileName) {
+        mappedRow.file_name = uploadedFileName
+      }
+  
       return mappedRow
     })
-  }, [rawData, rawHeaders, fieldMap])
+  }, [rawData, rawHeaders, fieldMap, uploadedFileName])
+  
 
   const columns = useMemo<ColumnDef<any>[]>(() =>
     Object.keys(mappedData[0] || {}).map(field => ({
