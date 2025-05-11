@@ -26,8 +26,8 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
-      <section className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="mx-auto py-10 px-4">
+      <section className="bg-white rounded-lg shadow-lg overflow-hidden ">
         <header className="bg-gray-100 px-6 py-4 border-b">
           <h1 className="text-2xl font-semibold text-gray-800">Data Upload</h1>
           <p className="mt-1 text-sm text-gray-600">Select fields and submit</p>
