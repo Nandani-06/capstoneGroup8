@@ -3,11 +3,7 @@
 import { useState } from 'react'
 
 interface Props {
-  filter: {
-    q: string
-    col: string
-  }
-  onFilterChange: (filter: { q: string; col: string }) => void
+  onFilterChange: (filters: Record<string, string>) => void
 }
 
 const searchableFields = [
@@ -16,48 +12,90 @@ const searchableFields = [
   'industry', 'file_name', 'sheet_name'
 ]
 
-export default function EfpSearchFilterBar({ filter, onFilterChange }: Props) {
-  const [searchText, setSearchText] = useState(filter.q)
-  const [selectedCol, setSelectedCol] = useState(filter.col)
+export default function EfpSearchFilterBar({ onFilterChange }: Props) {
+  const [conditions, setConditions] = useState([{ field: '', value: '' }])
+
+  const handleChange = (index: number, key: 'field' | 'value', val: string) => {
+    const updated = [...conditions]
+    updated[index][key] = val
+    setConditions(updated)
+  }
+
+  const addCondition = () => {
+    setConditions([...conditions, { field: '', value: '' }])
+  }
+
+  const removeCondition = (index: number) => {
+    setConditions(prev => prev.filter((_, i) => i !== index))
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onFilterChange({ q: searchText.trim(), col: selectedCol })
+    const filter: Record<string, string> = {}
+    conditions.forEach(({ field, value }) => {
+      if (field && value) filter[field] = value.trim()
+    })
+    onFilterChange(filter)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 mb-6 items-end">
-      <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700">Search Term</label>
-        <input
-          type="text"
-          value={searchText}
-          onChange={e => setSearchText(e.target.value)}
-          className="px-3 py-2 border rounded w-64 text-sm"
-          placeholder="Enter keyword..."
-        />
-      </div>
-      <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700">Field</label>
-        <select
-          value={selectedCol}
-          onChange={e => setSelectedCol(e.target.value)}
-          className="px-3 py-2 border rounded text-sm"
+    <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+      {conditions.map((cond, index) => (
+        <div key={index} className="flex flex-wrap items-end gap-4">
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Field</label>
+            <select
+              value={cond.field}
+              onChange={e => handleChange(index, 'field', e.target.value)}
+              className="px-3 py-2 border rounded text-sm"
+            >
+              <option value="">Select field</option>
+              {searchableFields.map(field => (
+                <option key={field} value={field}>
+                  {field}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Value</label>
+            <input
+              type="text"
+              value={cond.value}
+              onChange={e => handleChange(index, 'value', e.target.value)}
+              className="px-3 py-2 border rounded text-sm"
+              placeholder="Enter value"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => removeCondition(index)}
+            className="mt-6 px-3 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200"
+            disabled={conditions.length === 1}
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+
+      <div className="flex gap-4">
+        <button
+          type="button"
+          onClick={addCondition}
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
         >
-          <option value="">All fields</option>
-          {searchableFields.map(field => (
-            <option key={field} value={field}>
-              {field}
-            </option>
-          ))}
-        </select>
+          + Add Condition
+        </button>
+
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded"
+        >
+          Search
+        </button>
       </div>
-      <button
-        type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded"
-      >
-        Search
-      </button>
     </form>
   )
 }

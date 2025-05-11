@@ -5,7 +5,7 @@ import EfpSearchFilterBar from '@/components/EfpSearchFilterBar'
 import EfpPreviewTable from '@/components/EfpPreviewTable'
 
 export default function PreviewPage() {
-  const [filter, setFilter] = useState({ q: '', col: '' })
+  const [filter, setFilter] = useState<Record<string, string>>({})
 
   return (
     <div>
