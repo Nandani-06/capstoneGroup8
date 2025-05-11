@@ -119,6 +119,36 @@ def update_efp(request, pk):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PUT'])
+def update_efp_bulk(request):
+    if not isinstance(request.data, list):
+        return Response({'error': 'Expected a list of objects'}, status=status.HTTP_400_BAD_REQUEST)
+
+    updated_objects = []
+    errors = []
+
+    for entry in request.data:
+        pk = entry.get('id')
+        if not pk:
+            errors.append({'error': 'Missing id in entry', 'entry': entry})
+            continue
+
+        try:
+            obj = efp.objects.get(pk=pk)
+        except efp.DoesNotExist:
+            errors.append({'error': f'Object with id {pk} not found'})
+            continue
+
+        serializer = EfpSerializer(obj, data=entry, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            updated_objects.append(serializer.data)
+        else:
+            errors.append({'id': pk, 'errors': serializer.errors})
+
+    return Response({'updated': updated_objects, 'errors': errors}, status=status.HTTP_207_MULTI_STATUS)
+
+
 @api_view(['DELETE'])
 def delete_efp(request, pk): 
     try:

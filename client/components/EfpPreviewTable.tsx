@@ -29,6 +29,7 @@ const PAGE_SIZE = 15
 export default function EfpPreviewTable({ filter }: Props) {
   const [data, setData] = useState<EfpItem[]>([])
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [tagInput, setTagInput] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -110,6 +111,40 @@ export default function EfpPreviewTable({ filter }: Props) {
     }
   }
 
+  const handleUpdateTags = async () => {
+    if (!tagInput.trim() || selectedIds.length === 0) return
+    const confirmed = window.confirm(`Append tag "${tagInput}" to ${selectedIds.length} selected entries?`)
+    if (!confirmed) return
+
+    const updates = selectedIds.map(id => {
+      const existing = data.find(item => item.id === id)
+      const currentTags = existing?.tags || ''
+      const tagList = currentTags.split(',').map(t => t.trim()).filter(Boolean)
+      if (!tagList.includes(tagInput.trim())) {
+        tagList.push(tagInput.trim())
+      }
+      return { id, tags: tagList.join(', ') }
+    })
+
+    const res = await fetch('http://127.0.0.1:8000/api/efp/bulk-update/', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    })
+
+    if (res.ok) {
+      alert('Tags updated successfully!')
+      setTagInput('')
+      setData(prev => prev.map(item =>
+        selectedIds.includes(item.id)
+          ? { ...item, tags: updates.find(u => u.id === item.id)?.tags || item.tags }
+          : item
+      ))
+    } else {
+      alert('Failed to update tags.')
+    }
+  }
+
   const exportToCSV = () => {
     const csv = [allFields.join(',')]
     data.forEach(item => {
@@ -146,7 +181,21 @@ export default function EfpPreviewTable({ filter }: Props) {
             Clear Filter
           </button>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <input
+            type="text"
+            value={tagInput}
+            onChange={e => setTagInput(e.target.value)}
+            placeholder="Enter tag"
+            className="border px-2 py-1 rounded"
+          />
+          <button
+            onClick={handleUpdateTags}
+            disabled={selectedIds.length === 0 || !tagInput.trim()}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded disabled:opacity-50"
+          >
+            Add Tag
+          </button>
           <button onClick={selectAll} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded">Select All</button>
           <button onClick={deselectAll} className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded">Deselect All</button>
           <button
