@@ -22,7 +22,7 @@ Content-Type: application/json
 
 ###
 ### PUT (update) an existing EFP entry
-PUT http://127.0.0.1:8000/api/efp/update/1
+PUT http://127.0.0.1:8000/api/efp/update/2
 Content-Type: application/json
 
 {
@@ -51,4 +51,9 @@ Content-Type: application/json
 ###
 ### Search for contacts whose last name contains 'oe'.
 GET http://127.0.0.1:8000/api/search-efpincol?q=oe&col=last_name
+Content-Type: application/json
+
+###
+
+GET http://127.0.0.1:8000/api/search-efpincol?q=2&col=id
 Content-Type: application/json

@@ -2,6 +2,7 @@
 'use client'
 
 import FileImportTable from '@/components/FileImportTable'
+import ContactCU from '@/app/components/contactCU'
 
 const availableFields = [
   "first_name",
@@ -47,6 +48,9 @@ export default function UploadPage() {
           </button>
         </footer>
       </section>
+      <div className="mt-10">
+        <ContactCU />
+      </div>
     </div>
   )
 }

@@ -11,5 +11,5 @@ export default function ProcessPage() {
         Use the sidebar to navigate to the <strong>Data Upload</strong> and <strong>Data Preview</strong> sections.
       </p>
     </div>
-  )
+  );
 }
