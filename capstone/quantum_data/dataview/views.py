@@ -75,6 +75,23 @@ def search_efp_in_col(request):
     serializer = EfpSerializer(results, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def search_efp_advanced(request):
+    filters = {}
+    for field in [
+        'first_name', 'last_name', 'sex', 'email', 'email_2', 'teacher_category',
+        'tags', 'phone', 'mobile', 'school_name', 'school_category',
+        'industry', 'file_name', 'sheet_name']:
+        value = request.GET.get(field, '').strip()
+        if value:
+            filters[f'{field}__icontains'] = value
+
+    if not filters:
+        return Response({'error': 'No valid filters provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    results = efp.objects.filter(**filters)
+    serializer = EfpSerializer(results, many=True)
+    return Response(serializer.data)
 
 def efp_database_view(request):
     # Fetch first 5 rows from the database

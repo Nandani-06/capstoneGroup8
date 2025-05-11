@@ -21,10 +21,7 @@ interface EfpItem {
 }
 
 interface Props {
-  filter: {
-    q: string
-    col: string
-  }
+  filter: Record<string, string>
 }
 
 const PAGE_SIZE = 15
@@ -48,15 +45,14 @@ export default function EfpPreviewTable({ filter }: Props) {
     setLoading(true)
     setError(null)
 
-    let fetchUrl = ''
-    let doSearch = filter.q.trim().length > 0
+    const hasFilter = Object.values(filter).some(v => v.trim() !== '')
 
-    if (doSearch) {
-      const url = new URL(
-        'http://127.0.0.1:8000/api/' + (filter.col ? 'search-efpincol' : 'search-efp')
-      )
-      url.searchParams.append('q', filter.q)
-      if (filter.col) url.searchParams.append('col', filter.col)
+    let fetchUrl = ''
+    if (hasFilter) {
+      const url = new URL('http://127.0.0.1:8000/api/search-efp-advanced')
+      Object.entries(filter).forEach(([key, val]) => {
+        if (val.trim()) url.searchParams.append(key, val.trim())
+      })
       fetchUrl = url.toString()
     } else {
       fetchUrl = 'http://127.0.0.1:8000/api/efp/'
