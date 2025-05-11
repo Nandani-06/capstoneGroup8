@@ -130,6 +130,17 @@ def delete_efp(request, pk):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['POST'])
+def delete_efp_bulk(request):
+    ids = request.data.get('ids', [])
+    
+    if not isinstance(ids, list) or not all(isinstance(i, int) for i in ids):
+        return Response({'error': 'Invalid ID list'}, status=status.HTTP_400_BAD_REQUEST)
+
+    deleted_count, _ = efp.objects.filter(id__in=ids).delete()
+
+    return Response({'deleted': deleted_count}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
 def create_efp(request):
     serializer = EfpSerializer(data=request.data)
     if serializer.is_valid():

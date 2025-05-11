@@ -14,5 +14,7 @@ urlpatterns = [
     path('api/search-efpincol', views.search_efp_in_col, name='search_efp_in_col'),
     path('api/efp/bulk/', views.create_efp_bulk, name='efp-bulk-create'),
     path('api/search-efp-advanced', views.search_efp_advanced, name='search_efp_advanced'),
+    path('api/efp/delete-bulk/', views.delete_efp_bulk, name='delete_efp_bulk'),
+
 
 ]
