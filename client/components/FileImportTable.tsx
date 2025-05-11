@@ -167,7 +167,7 @@ export default function FileImportTable({
           </div>
 
           <div className="mt-4">
-            <label className="block mb-1 font-medium text-gray-800">Add Tag to All Rows</label>
+            <label className="block mb-1 text-lg font-semibold text-gray-800">Add Tag to All Rows</label>
             <div className="flex gap-2 items-center">
               <input
                 type="text"
