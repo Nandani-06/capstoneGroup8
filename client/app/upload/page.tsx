@@ -2,6 +2,7 @@
 'use client'
 
 import FileImportTable from '@/components/FileImportTable'
+import AddContact from '@/components/AddContact'
 
 const availableFields = [
   "first_name",
@@ -47,6 +48,9 @@ export default function UploadPage() {
           </button>
         </footer>
       </section>
+      <div className="mt-10 flex justify-center">
+        <AddContact />
+      </div>
     </div>
   )
 }
