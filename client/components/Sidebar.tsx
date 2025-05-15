@@ -20,12 +20,14 @@ export default function Sidebar() {
     <aside className="w-64 min-h-screen bg-gray-100 border-r px-4 py-6">
       {/* Logo above the title */}
       <div className="flex flex-col items-start mb-6">
+        <Link href="/">
         <Image
           src="/logo/logo.png"         // maps to public/logo/logo.png
           alt="Einstein First Logo"
           width={160}                   // adjust for desired size
           height={160}
         />
+        </Link>
         <h2 className="mt-2 text-2xl font-bold text-gray-800">
           EFP Admin
         </h2>
