@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import EditContact from "@/components/EditContact"
 
 interface EfpItem {
   id: number
@@ -34,6 +35,8 @@ export default function EfpPreviewTable({ filter, onExportEmails }: Props) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [editContact, setEditContact] = useState<EfpItem | null>(null)
 
   const totalPages = Math.ceil(data.length / PAGE_SIZE)
   const paginatedData = data.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
@@ -178,6 +181,22 @@ export default function EfpPreviewTable({ filter, onExportEmails }: Props) {
     window.location.reload()
   }
 
+  const handleEditSelected = () => {
+    if (selectedIds.length !== 1) {
+      alert("Please select exactly one contact to edit.")
+      return
+    }
+    const contact = data.find(item => item.id === selectedIds[0]) || null
+    setEditContact(contact)
+    setEditModalOpen(true)
+  }
+
+  const handleContactUpdated = (updated: EfpItem) => {
+    setData(prev =>
+      prev.map(item => (item.id === updated.id ? { ...item, ...updated } : item))
+    )
+  }
+
   if (loading) return <p className="text-gray-700">Loading...</p>
   if (error) return <p className="text-red-600">Error: {error}</p>
 
@@ -215,6 +234,19 @@ export default function EfpPreviewTable({ filter, onExportEmails }: Props) {
             className={`px-4 py-2 rounded text-white font-medium ${selectedIds.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
           >
             Delete Selected
+          </button>
+          <EditContact
+            contact={editContact}
+            open={editModalOpen}
+            onClose={() => setEditModalOpen(false)}
+            onUpdated={handleContactUpdated}
+          />
+          <button
+            onClick={handleEditSelected}
+            disabled={selectedIds.length !== 1}
+            className={`px-4 py-2 rounded text-white font-medium ${selectedIds.length !== 1 ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+          >
+            Edit Selected
           </button>
         </div>
       </div>

@@ -9,6 +9,7 @@ const navItems = [
   { label: 'Data Upload', href: '/upload' },
   { label: 'Data Preview', href: '/preview' },
   { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Workshops', href: '/workshop' },
 
 ]
 
