@@ -8,6 +8,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import EfpSerializer
 from rest_framework import status
+from .models import workshop
+from .serializers import WorkshopSerializer  # Make sure this serializer exists
+from dateutil import parser
+from datetime import datetime
 
 @api_view(['GET'])
 def search_efp(request):
@@ -74,6 +78,7 @@ def search_efp_in_col(request):
 
     serializer = EfpSerializer(results, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def search_efp_advanced(request):
@@ -223,5 +228,139 @@ def upload_csv_view(request):
 
     else:
         # Show the form to upload CSV
+        form = CSVUploadForm()
+        return render(request, 'upload_csv.html', {'form': form})
+
+
+# For Workshop table
+
+
+
+
+# GET all workshop entries
+@api_view(['GET'])
+def workshop_database_api(request):
+    data = workshop.objects.all()
+    serializer = WorkshopSerializer(data, many=True)
+    return Response(serializer.data)
+
+
+# PUT (update) a workshop entry
+@api_view(['PUT'])
+def update_workshop(request, pk):
+    try:
+        obj = workshop.objects.get(pk=pk)
+    except workshop.DoesNotExist:
+        return Response({'error': 'Object not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = WorkshopSerializer(obj, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# DELETE a workshop entry
+@api_view(['DELETE'])
+def delete_workshop(request, pk):
+    try:
+        obj = workshop.objects.get(pk=pk)
+    except workshop.DoesNotExist:
+        return Response({'error': 'Object not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    obj.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# POST (create) a single workshop entry
+@api_view(['POST'])
+def create_workshop(request):
+    serializer = WorkshopSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# POST bulk create
+@api_view(['POST'])
+def create_workshop_bulk(request):
+    if not isinstance(request.data, list):
+        return Response({'error': 'Expected a list of objects'}, status=400)
+
+    serializer = WorkshopSerializer(data=request.data, many=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+
+# Upload CSV to save to workshop table
+# def upload_workshop_csv_view(request):
+#     if request.method == 'POST' and request.FILES.get('csv_file'):
+#         csv_file = request.FILES['csv_file']
+#         csv_file = TextIOWrapper(csv_file.file, encoding='utf-8')
+#         csv_reader = csv.DictReader(csv_file)
+#
+#         for row in csv_reader:
+#             workshop.objects.create(
+#                 date=row.get('Date') or None,
+#                 event=row.get('Event') or None,
+#                 event_type=row.get('Event type') or None,
+#                 presenters=row.get('presenters') or None,
+#                 participants_female=(
+#                     int(row['Participants/Female']) if row.get('Participants/Female') else None
+#                 ),
+#                 schools=(
+#                     int(row['Schools']) if row.get('Schools') else None
+#                 ),
+#                 project=row.get('Project') or None,
+#                 comment=row.get('Comment') or None
+#             )
+#
+#         return HttpResponse("Workshop CSV data added to the database.")
+#
+#     else:
+#         form = CSVUploadForm()
+#         return render(request, 'upload_csv.html', {'form': form})
+
+
+
+def parse_date_safe(date_str):
+    try:
+        # Ignore range-style or obviously bad entries
+        if not date_str or '-' in date_str and '/' in date_str:
+            return None
+        # Try to parse normally
+        return parser.parse(date_str, dayfirst=True).date()
+    except Exception:
+        return None
+
+def safe_int(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+def upload_workshop_csv_view(request):
+    if request.method == 'POST' and request.FILES.get('csv_file'):
+        csv_file = request.FILES['csv_file']
+        csv_file = TextIOWrapper(csv_file.file, encoding='utf-8')
+        csv_reader = csv.DictReader(csv_file)
+
+        for row in csv_reader:
+            workshop.objects.create(
+                date=parse_date_safe(row.get('Date')),
+                event=row.get('Event') or None,
+                event_type=row.get('Event type') or None,
+                presenters=row.get('presenters') or None,
+                participants_female=safe_int(row.get('Participants/Female')),
+                schools=safe_int(row.get('Schools')),
+                project=row.get('Project') or None,
+                comment=row.get('Comment') or None
+            )
+
+        return HttpResponse("Workshop CSV data added to the database.")
+    else:
         form = CSVUploadForm()
         return render(request, 'upload_csv.html', {'form': form})

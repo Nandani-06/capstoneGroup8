@@ -14,8 +14,20 @@ urlpatterns = [
     path('api/search-efp', views.search_efp, name='search_efp'),
     path('api/search-efpincol', views.search_efp_in_col, name='search_efp_in_col'),
     path('api/efp/bulk/', views.create_efp_bulk, name='efp-bulk-create'),
+
+
+    path('api/workshops/', views.workshop_database_api, name='workshop_list_api'),
+    path('api/workshops/create/', views.create_workshop, name='create_workshop_api'),
+    path('api/workshops/create-bulk/', views.create_workshop_bulk, name='create_workshop_bulk_api'),
+    path('api/workshops/<int:pk>/update/', views.update_workshop, name='update_workshop_api'),
+    path('api/workshops/<int:pk>/delete/', views.delete_workshop, name='delete_workshop_api'),
+    path('upload-workshop-csv/', views.upload_workshop_csv_view, name='upload_workshop_csv'),
+
+
+
     path('api/search-efp-advanced', views.search_efp_advanced, name='search_efp_advanced'),
     path('api/efp/delete-bulk/', views.delete_efp_bulk, name='delete_efp_bulk'),
     path('api/efp/bulk-update/', views.update_efp_bulk, name='update_efp_bulk'),
     path('token-auth/', rest_views.obtain_auth_token),
+
 ]
