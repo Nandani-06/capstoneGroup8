@@ -18,6 +18,22 @@ class efp(models.Model):
     sheet_name = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
-        db_table = 'public.efp'  # Explicitly define schema
-         # Prevent Django from modifying the table
+       db_table = 'public.efp'  # Explicitly define schema
+
+
+class workshop(models.Model):
+    date = models.DateField(null=True, blank=True)
+    event = models.CharField(max_length=255, null=True, blank=True)
+    event_type = models.CharField(max_length=255, null=True, blank=True)
+    presenters = models.TextField(null=True, blank=True)
+    participants_female = models.IntegerField(null=True, blank=True)
+    schools = models.IntegerField(null=True, blank=True)
+    project = models.TextField(null=True, blank=True)
+    comment = models.TextField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'public.workshop'
+
+
+
 
