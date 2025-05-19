@@ -21,6 +21,14 @@ const availableFields = [
   "tags"
 ]
 
+const fieldDisplayNames: Record<string, string> = {
+  'sex': 'gender'
+}
+
+const getDisplayName = (field: string) => {
+  return fieldDisplayNames[field] || field
+}
+
 export default function UploadPage() {
   const handleSubmit = (data: any[]) => {
     console.log('Submitted Data:', data)
@@ -34,10 +42,11 @@ export default function UploadPage() {
           <p className="mt-1 text-sm text-gray-600">Select fields and submit</p>
         </header>
         <div className="p-6 space-y-6">
-          <FileImportTable
-            availableFields={availableFields}
-            onSubmit={handleSubmit}
-          />
+        <FileImportTable
+          availableFields={availableFields}
+          fieldDisplayNames={fieldDisplayNames}
+          onSubmit={handleSubmit}
+        />
         </div>
         <footer className="px-6 py-4 bg-gray-50 border-t text-right">
           <button
