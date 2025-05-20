@@ -47,6 +47,16 @@ export default function EfpPreviewTable({ filter, onExportEmails }: Props) {
     "industry", "file_name", "sheet_name"
   ]
 
+  // create a mapping of field names to display names
+  const fieldDisplayNames: Record<string, string> = {
+    'sex': 'gender'
+  }
+  
+  // get and display name for each field
+  const getDisplayName = (field: string) => {
+    return fieldDisplayNames[field] || field
+  }
+
   useEffect(() => {
     setLoading(true)
     setError(null)
@@ -160,7 +170,7 @@ export default function EfpPreviewTable({ filter, onExportEmails }: Props) {
   }
 
   const exportToCSV = () => {
-    const csv = [allFields.join(',')]
+    const csv = [allFields.map(field => getDisplayName(field)).join(',')]
     data.forEach(item => {
       const row = allFields.map(field => {
         const val = item[field as keyof EfpItem]
@@ -258,7 +268,7 @@ export default function EfpPreviewTable({ filter, onExportEmails }: Props) {
               <th className="px-4 py-2 border-r">Select</th>
               {allFields.map(field => (
                 <th key={field} className="px-4 py-2 font-medium text-gray-700 border-r">
-                  {field}
+                  {getDisplayName(field)}
                 </th>
               ))}
             </tr>

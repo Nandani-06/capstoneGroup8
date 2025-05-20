@@ -12,6 +12,16 @@ const searchableFields = [
   'industry', 'file_name', 'sheet_name'
 ]
 
+// create a mapping of field names to display names
+const fieldDisplayNames: Record<string, string> = {
+   'sex': 'gender'
+}
+  
+// get and display name for each field
+const getDisplayName = (field: string) => {
+  return fieldDisplayNames[field] || field
+}
+
 export default function EfpSearchFilterBar({ onFilterChange }: Props) {
   const [conditions, setConditions] = useState([{ field: '', value: '' }])
 
@@ -52,7 +62,7 @@ export default function EfpSearchFilterBar({ onFilterChange }: Props) {
               <option value="">Select field</option>
               {searchableFields.map(field => (
                 <option key={field} value={field}>
-                  {field}
+                  {getDisplayName(field)}
                 </option>
               ))}
             </select>

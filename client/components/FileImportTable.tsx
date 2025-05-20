@@ -13,11 +13,13 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 
 interface FileImportTableProps {
   availableFields: string[]
+  fieldDisplayNames?: Record<string, string>;
   onSubmit: (data: any[]) => void
 }
 
 export default function FileImportTable({
   availableFields,
+  fieldDisplayNames = {},
   onSubmit,
 }: FileImportTableProps) {
   const [rawHeaders, setRawHeaders] = useState<string[]>([])
@@ -47,6 +49,10 @@ export default function FileImportTable({
     },
   })
 
+  const getDisplayName = (field: string) => {
+    return fieldDisplayNames[field] || field;
+  }
+
   const mappedData = useMemo(() => {
     return rawData.map((row, rowIndex) => {
       const mappedRow: any = {}
@@ -69,7 +75,7 @@ export default function FileImportTable({
   const columns = useMemo<ColumnDef<any>[]>(() =>
     Object.keys(mappedData[0] || {}).map(field => ({
       accessorKey: field,
-      header: field,
+      header: getDisplayName(field),
       cell: info => (
         <input
           className="border border-gray-300 bg-white text-gray-900 px-2 py-1 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -82,7 +88,7 @@ export default function FileImportTable({
           }}
         />
       ),
-    })), [mappedData, rawData]
+    })), [mappedData, rawData, getDisplayName]
   )
 
   const table = useReactTable({
@@ -158,7 +164,7 @@ export default function FileImportTable({
                   <option value="">Ignore this column</option>
                   {availableFields.map(f => (
                     <option key={f} value={f}>
-                      {f}
+                      {getDisplayName(f)}
                     </option>
                   ))}
                 </select>
