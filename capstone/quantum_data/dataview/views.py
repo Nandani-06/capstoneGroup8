@@ -72,8 +72,13 @@ def search_efp_in_col(request):
     if column not in valid_columns:
         return Response({'error': f'Invalid column: {column}'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Perform a case-insensitive search on the specified column
-    filter_kwargs = {f"{column}__icontains": query}
+    # Use iexact for sex, icontains for others
+    if column == 'sex':
+        filter_kwargs = {f"{column}__iexact": query}
+    else:
+        # Perform a case-insensitive search on the specified column
+        filter_kwargs = {f"{column}__icontains": query}
+    
     results = efp.objects.filter(**filter_kwargs)
 
     serializer = EfpSerializer(results, many=True)
@@ -89,7 +94,10 @@ def search_efp_advanced(request):
         'industry', 'file_name', 'sheet_name']:
         value = request.GET.get(field, '').strip()
         if value:
-            filters[f'{field}__icontains'] = value
+            if field == 'sex':
+                filters[f'{field}__iexact'] = value
+            else:
+                filters[f'{field}__icontains'] = value
 
     if not filters:
         return Response({'error': 'No valid filters provided'}, status=status.HTTP_400_BAD_REQUEST)
