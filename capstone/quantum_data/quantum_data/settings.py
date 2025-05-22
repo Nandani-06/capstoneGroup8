@@ -93,8 +93,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'quantum',  # Your actual database name
         'USER': 'postgres',
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'password'),  # Use environment variable for password
-        'HOST': 'localhost',
+        'PASSWORD': 'postgres',  # Use environment variable for password
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
