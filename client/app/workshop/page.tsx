@@ -1,5 +1,6 @@
 'use client'
-
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 import { useState, useEffect } from 'react'
 import {
   Dialog,
@@ -12,10 +13,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
 import { format } from 'date-fns'
-import { cn } from '@/lib/utils'
+
 
 interface Workshop {
   id: number
@@ -122,24 +121,24 @@ export default function WorkshopPage() {
           </tr>
         </thead>
         <tbody>
-  {paginated.map(w => (
-    <tr key={w.id} className="border">
-      <td className="px-3 py-2 text-center">{w.date}</td>
-      <td className="px-3 py-2 text-center">{w.event}</td>
-      <td className="px-3 py-2 text-center">{w.event_type}</td>
-      <td className="px-3 py-2 text-center">{w.presenters}</td>
-      <td className="px-3 py-2 text-center">{w.participants}</td>
-      <td className="px-3 py-2 text-center">{w.participants_female}</td>
-      <td className="px-3 py-2 text-center">{w.schools}</td>
-      <td className="px-3 py-2 text-center">{w.project}</td>
-      <td className="px-3 py-2 text-center">{w.comment}</td>
-      <td className="px-3 py-2 text-center whitespace-nowrap">
-        <Button size="sm" onClick={() => handleEdit(w)} className="mr-2">Edit</Button>
-        <Button size="sm" variant="destructive" onClick={() => handleDelete(w)}>Delete</Button>
-      </td>
-    </tr>
-  ))}
-</tbody>
+          {paginated.map(w => (
+            <tr key={w.id} className="border">
+              <td className="px-3 py-2 text-center">{w.date}</td>
+              <td className="px-3 py-2 text-center">{w.event}</td>
+              <td className="px-3 py-2 text-center">{w.event_type}</td>
+              <td className="px-3 py-2 text-center">{w.presenters}</td>
+              <td className="px-3 py-2 text-center">{w.participants}</td>
+              <td className="px-3 py-2 text-center">{w.participants_female}</td>
+              <td className="px-3 py-2 text-center">{w.schools}</td>
+              <td className="px-3 py-2 text-center">{w.project}</td>
+              <td className="px-3 py-2 text-center">{w.comment}</td>
+              <td className="px-3 py-2 text-center whitespace-nowrap">
+                <Button size="sm" onClick={() => handleEdit(w)} className="mr-2">Edit</Button>
+                <Button size="sm" variant="destructive" onClick={() => handleDelete(w)}>Delete</Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </table>
 
       <div className="mt-4 flex justify-between">
@@ -155,14 +154,17 @@ export default function WorkshopPage() {
           </DialogHeader>
 
           <div className="space-y-3">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}> {date ? format(date, "PPP") : "Pick a date"} </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
-              </PopoverContent>
-            </Popover>
+            <div>
+              <label className="block mb-1 text-sm font-medium">Date</label>
+              <DatePicker
+                selected={date}
+                onChange={(date: Date) => setDate(date)}
+                dateFormat="yyyy-MM-dd"
+                className="w-full border px-3 py-2 rounded-md"
+                placeholderText="Select a date"
+              />
+            </div>
+
 
             <Input placeholder="Event" value={form.event || ''} onChange={e => setForm({ ...form, event: e.target.value })} />
             <Input placeholder="Event Type" value={form.event_type || ''} onChange={e => setForm({ ...form, event_type: e.target.value })} />
