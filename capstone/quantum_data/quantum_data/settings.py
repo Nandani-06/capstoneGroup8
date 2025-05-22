@@ -27,13 +27,14 @@ SECRET_KEY = 'django-insecure-^n61w6$2p0d5lav(_e=p8580wtqx)p&q$q*zrl7t!h_#z9r=2y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['backend', 'localhost', '127.0.0.1']
 
 #CORS settings
 # https://pypi.org/project/django-cors-headers/
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://frontend:3000",
 ]
 
 
